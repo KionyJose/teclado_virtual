@@ -4,8 +4,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:xinput_gamepad/xinput_gamepad.dart';
 
-import 'JanelaCtrl.dart';
-
 
 class Paad with ChangeNotifier{
   late BuildContext ctx;
@@ -52,12 +50,12 @@ class Paad with ChangeNotifier{
     notifyListeners();
   }
 
- Future <bool> naTela() async {
-    bool it =  await JanelaCtrl.janelaAtiva();
-    if (!it) debugPrint(" ===== Aplicativo está INATIVO. =====");
-    if (it) debugPrint(" ===== NA TELA =====");
-    return it;
-  }
+//  Future <bool> naTela() async {
+//     bool it =  await JanelaCtrl.janelaAtiva();
+//     if (!it) debugPrint(" ===== Aplicativo está INATIVO. =====");
+//     if (it) debugPrint(" ===== NA TELA =====");
+//     return it;
+//   }
 
   addSequencia(String event){    
     if(event == "")return;

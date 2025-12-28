@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:screen_retriever/screen_retriever.dart';
 import 'package:teclado_virtual/JanelaCtrl.dart';
+import 'package:teclado_virtual/TecladoCtrl.dart';
 import 'package:teclado_virtual/config.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:xinput_gamepad/xinput_gamepad.dart';
@@ -93,22 +94,45 @@ class _TecladoWidState extends State<TecladoWid> {
     });
   
   }
+
+  String direcaoListView(FocusScopeNode focusScope, String event){
+    String estilo = "";
+    if(event == "ESQUERDA" || event == "A"){//ESQUERDA
+        focusScope.focusInDirection(TraversalDirection.left);
+        estilo = "horizontal";
+      }
+      if(event == "DIREITA" || event == "D"){//DIREITA
+        focusScope.focusInDirection(TraversalDirection.right);
+        estilo = "horizontal";
+      }
+      if(event == "CIMA" || event == "W"){//CIMA
+        focusScope.focusInDirection(TraversalDirection.up);
+        estilo = "vertical";
+      }
+      if(event == "BAIXO" || event == "S"){//BAIXO
+        focusScope.focusInDirection(TraversalDirection.down);
+        estilo = "vertical";
+      }
+      // if(estilo.isEmpty)audClick();
+      // if(estilo.isNotEmpty)audioDirection(=-n
+    return estilo;
+  }
   
 
-  escutaPaadClick(BuildContext ctx ,JanelaCtrl ctrl, String event) async {
+  escutaPaadClick(BuildContext ctx , String event) async {
     if(event.isEmpty) return;
-    String direction = ctrl.direcaoListView(focusScope, event);
+    String direction = direcaoListView(focusScope, event);
     if(direction.isNotEmpty){
       //Reproduzir som movvf
       // moveFocus(key);
       return;
     }
     if(event == "1"){
-      await ctrl.digitaTecla("Backspace");
+      TecladoCtrl.typeKey("Backspace");
       return;
     }
     if(event == "4"){
-      await ctrl.digitaTecla("SPACE");
+      TecladoCtrl.typeKey("SPACE");
       return;
     }
     if(event  == "2"){
@@ -129,7 +153,7 @@ class _TecladoWidState extends State<TecladoWid> {
       if(key == "Esc"){//Expande  3
         return await redimencionarTela(ctx);
       }
-      return await ctrl.digitaTecla(key);
+      TecladoCtrl.typeKey(key);
 
     }
     if(event == "3"){
@@ -182,25 +206,25 @@ class _TecladoWidState extends State<TecladoWid> {
         backgroundColor: Colors.transparent,
         body: Center(
           child: Consumer<JanelaCtrl>(
-            builder: (context, ctrl, child) =>  escutaPaad(context, ctrl),
+            builder: (context, ctrl, child) =>  escutaPaad(context),
           ),
         ),
       ),
     );
   }
 
-  escutaPaad(BuildContext context,JanelaCtrl ctrl){
+  escutaPaad(BuildContext context){
     return Selector<Paad, String>(
       selector: (context, paad) => paad.click, // Escuta apenas click
       builder: (context, key, child) {
         // escutaPaadClick(ctrl,key);bbbbbbbbbbbb
-        WidgetsBinding.instance.addPostFrameCallback((_) => escutaPaadClick(context, ctrl,key));
-        return body(context, ctrl);
+        WidgetsBinding.instance.addPostFrameCallback((_) => escutaPaadClick(context,key));
+        return body(context);
       },
     );  
   }
 
-  body(BuildContext context,JanelaCtrl ctrl){
+  body(BuildContext context){
     return FocusScope(
       node: focusScope,
       child: Container(
@@ -253,7 +277,7 @@ class _TecladoWidState extends State<TecladoWid> {
                       ),
                     ],
                   ),
-                  teclas(ctrl),
+                  teclas(),
             
           ],
         ),
@@ -261,7 +285,7 @@ class _TecladoWidState extends State<TecladoWid> {
     );
   }
 
-  teclas(JanelaCtrl ctrl){
+  teclas(){
     indexBtn = -1;
     return Expanded(
       child: FittedBox(
@@ -282,10 +306,7 @@ class _TecladoWidState extends State<TecladoWid> {
                     // color: Colors.red,
                     margin: EdgeInsets.all(2.0),
                     child: ElevatedButton(
-                      onPressed:() async {
-                      String str = await ctrl.digitaTecla(key);
-                      debugPrint(str);
-                      },
+                      onPressed:() => TecladoCtrl.typeKey(key),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: foco ? Colors.black : Colors.transparent,
                         minimumSize: Size(buttonWidth, 60), // Tamanho do botãou8

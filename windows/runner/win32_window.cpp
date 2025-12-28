@@ -213,6 +213,12 @@ Win32Window::MessageHandler(HWND hwnd,
       }
       return 0;
 
+    case WM_MOUSEACTIVATE:
+      // Prevent the window from activating when clicked so it doesn't steal
+      // focus from other applications. This allows the overlay to receive
+      // mouse events without taking keyboard focus (MA_NOACTIVATE).
+      return MA_NOACTIVATE;
+
     case WM_DWMCOLORIZATIONCOLORCHANGED:
       UpdateTheme(hwnd);
       return 0;
